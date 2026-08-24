@@ -11,25 +11,29 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                sh 'python3 -m pip install -r requirements.txt'
+                sh '''
+                    python3 -m venv .venv
+                    .venv/bin/pip install --upgrade pip
+                    .venv/bin/pip install -r requirements.txt
+                '''
             }
         }
 
         stage('Code Quality') {
             steps {
-                sh 'flake8 app tests'
+                sh '.venv/bin/flake8 app tests'
             }
         }
 
         stage('Unit Tests') {
             steps {
-                sh 'pytest'
+                sh '.venv/bin/pytest'
             }
         }
 
         stage('Security Scan') {
             steps {
-                sh 'bandit -r app'
+                sh '.venv/bin/bandit -r app'
             }
         }
     }
